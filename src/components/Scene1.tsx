@@ -9,8 +9,8 @@ interface Scene1Props {
 }
 
 const Scene1 = ({ scrollProgress, courses }: Scene1Props) => {
-  const textOpacity = useTransform(scrollProgress, [0, 0.1], [1, 0]);
-  const textScale = useTransform(scrollProgress, [0, 0.1], [1, 0.95]);
+  const textOpacity = useTransform(scrollProgress, [0, 0.05], [1, 0]);
+  const textScale = useTransform(scrollProgress, [0, 0.05], [1, 0.95]);
 
   return (
     <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">

@@ -10,13 +10,13 @@ interface Scene2Props {
 }
 
 const Scene2 = ({ scrollProgress, courses }: Scene2Props) => {
-  // Scene 2 is active from 0.5 to 1.0 of the total scroll progress
+  // Scene 2 is active from 0.33 to 0.66 of the total scroll progress
   // Let's normalize it to 0-1 for Scene 2's internal use
-  const failureProgress = useTransform(scrollProgress, [0.5, 1], [0, 1]);
+  const failureProgress = useTransform(scrollProgress, [0.33, 0.66], [0, 1]);
   
   // Scene 2 specific UI elements
-  const countdownOpacity = useTransform(scrollProgress, [0.55, 0.65], [0, 1]);
-  const countdownScale = useTransform(scrollProgress, [0.55, 0.65], [0.9, 1]);
+  const countdownOpacity = useTransform(scrollProgress, [0.38, 0.43], [0, 1]);
+  const countdownScale = useTransform(scrollProgress, [0.38, 0.43], [0.9, 1]);
   
   // Countdown Timer Logic
   const [timeLeft, setTimeLeft] = useState({ days: 12, hours: 4, mins: 32, secs: 15 });
@@ -45,19 +45,19 @@ const Scene2 = ({ scrollProgress, courses }: Scene2Props) => {
       {/* Exam Countdown Corner */}
       <motion.div 
         style={{ opacity: countdownOpacity, scale: countdownScale }}
-        className="absolute top-8 right-8 z-[100] bg-white/80 backdrop-blur-md border border-zinc-200 p-4 rounded-2xl shadow-xl"
+        className="absolute top-4 right-4 md:top-8 md:right-8 z-[100] bg-white/80 backdrop-blur-md border border-zinc-200 p-3 md:p-4 rounded-xl md:rounded-2xl shadow-xl"
       >
         <div className="flex items-center gap-2 mb-2 text-zinc-400">
-          <Clock size={14} />
-          <span className="text-[10px] font-bold uppercase tracking-widest">Final Exam Countdown</span>
+          <Clock className="w-3 h-3 md:w-3.5 md:h-3.5" />
+          <span className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest">Final Exam Countdown</span>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-2 md:gap-4">
           {Object.entries(timeLeft).map(([label, value]) => (
             <div key={label} className="text-center">
-              <div className="text-xl font-black text-zinc-800 tabular-nums">
+              <div className="text-sm md:text-xl font-black text-zinc-800 tabular-nums">
                 {value.toString().padStart(2, '0')}
               </div>
-              <div className="text-[8px] font-bold text-zinc-400 uppercase">{label}</div>
+              <div className="text-[6px] md:text-[8px] font-bold text-zinc-400 uppercase">{label}</div>
             </div>
           ))}
         </div>
