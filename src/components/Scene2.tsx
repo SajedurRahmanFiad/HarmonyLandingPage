@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useTransform } from 'motion/react';
+import { motion, useTransform, MotionValue } from 'motion/react';
 import { Course } from '../types';
 import CourseCard from './CourseCard';
 import { Clock } from 'lucide-react';
 
 interface Scene2Props {
-  scrollProgress: any;
+  scrollProgress: MotionValue<number>;
   courses: Course[];
 }
 
 const Scene2 = ({ scrollProgress, courses }: Scene2Props) => {
-  // Scene 2 is active from 0.33 to 0.66 of the total scroll progress
-  // Let's normalize it to 0-1 for Scene 2's internal use
-  const failureProgress = useTransform(scrollProgress, [0.33, 0.66], [0, 1]);
+  // scrollProgress is already normalized to [0, 1] for this scene
+  const failureProgress = scrollProgress;
   
   // Scene 2 specific UI elements
-  const countdownOpacity = useTransform(scrollProgress, [0.38, 0.43], [0, 1]);
-  const countdownScale = useTransform(scrollProgress, [0.38, 0.43], [0.9, 1]);
+  const countdownOpacity = useTransform(scrollProgress, [0.1, 0.3], [0, 1]);
+  const countdownScale = useTransform(scrollProgress, [0.1, 0.3], [0.9, 1]);
   
   // Countdown Timer Logic
   const [timeLeft, setTimeLeft] = useState({ days: 12, hours: 4, mins: 32, secs: 15 });

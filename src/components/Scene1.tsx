@@ -1,10 +1,10 @@
 import React from 'react';
-import { motion, useTransform } from 'motion/react';
+import { motion, useTransform, MotionValue } from 'motion/react';
 import { Course } from '../types';
 import CourseCard from './CourseCard';
 
 interface Scene1Props {
-  scrollProgress: any;
+  scrollProgress: MotionValue<number>;
   courses: Course[];
 }
 

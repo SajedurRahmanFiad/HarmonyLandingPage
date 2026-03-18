@@ -4,6 +4,7 @@ import { Course } from './types';
 import Scene1 from './components/Scene1';
 import Scene2 from './components/Scene2';
 import Scene3 from './components/Scene3';
+import LandingPage from './components/LandingPage';
 
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
@@ -83,11 +84,23 @@ export default function App() {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width } = useWindowSize();
   const isMobile = width < 768;
+  const [showLanding, setShowLanding] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
   });
+
+  useEffect(() => {
+    const unsubscribe = scrollYProgress.on("change", (v) => {
+      if (v >= 0.99 && !showLanding) {
+        setShowLanding(true);
+        window.scrollTo(0, 0);
+      }
+    });
+    return () => unsubscribe();
+  }, [scrollYProgress, showLanding]);
+
 
   // Scale course positions for mobile
   const responsiveCourses = courses.map(course => ({
@@ -102,53 +115,86 @@ export default function App() {
     }
   }));
 
-  // Scene 1: 0 to 0.33
-  // Scene 2: 0.33 to 0.66
-  // Scene 3: 0.66 to 1.0
-  const scene1Opacity = useTransform(scrollYProgress, [0.3, 0.33], [1, 0]);
-  const scene2Opacity = useTransform(scrollYProgress, [0.33, 0.36, 0.63, 0.66], [0, 1, 1, 0]);
-  const scene3Opacity = useTransform(scrollYProgress, [0.66, 0.69], [0, 1]);
+  // Scene 1: 0 to 0.3
+  // Scene 2: 0.3 to 0.6
+  // Scene 3: 0.6 to 0.9
+  // Transition: 0.9 to 1.0
+  const scene1Opacity = useTransform(scrollYProgress, [0.27, 0.3], [1, 0]);
+  const scene2Opacity = useTransform(scrollYProgress, [0.3, 0.33, 0.57, 0.6], [0, 1, 1, 0]);
+  const scene3Opacity = useTransform(scrollYProgress, [0.6, 0.63, 0.87, 0.9], [0, 1, 1, 0]);
+  
+  const transitionOpacity = useTransform(scrollYProgress, [0.9, 0.95, 0.98, 1], [0, 1, 1, 0]);
+  const onboardingContainerOpacity = useTransform(scrollYProgress, [0.9, 0.95], [1, 0]);
+
+  if (showLanding) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, ease: "easeInOut" }}
+        className="min-h-screen bg-[#F8F9FA]"
+      >
+        <LandingPage />
+      </motion.div>
+    );
+  }
 
   return (
-    <div ref={containerRef} className="relative bg-white h-[900vh]">
-      {/* Scene 1: The Promise */}
-      <motion.div 
-        style={{ 
-          opacity: scene1Opacity, 
-          pointerEvents: useTransform(scrollYProgress, [0.3, 0.33], ["auto", "none"]),
-          display: useTransform(scrollYProgress, [0.33, 0.34], ["block", "none"])
-        }}
-        className="fixed inset-0 z-10"
-      >
-        <Scene1 scrollProgress={scrollYProgress} courses={responsiveCourses} />
+    <div ref={containerRef} className="relative bg-white h-[1000vh]">
+      <motion.div style={{ opacity: onboardingContainerOpacity }} className="fixed inset-0">
+        {/* Scene 1: The Promise */}
+        <motion.div 
+          style={{ 
+            opacity: scene1Opacity, 
+            pointerEvents: useTransform(scrollYProgress, [0.27, 0.3], ["auto", "none"]),
+            display: useTransform(scrollYProgress, [0.3, 0.31], ["block", "none"])
+          }}
+          className="fixed inset-0 z-10"
+        >
+          <Scene1 scrollProgress={scrollYProgress} courses={responsiveCourses} />
+        </motion.div>
+
+        {/* Scene 2: The Quiet Failure */}
+        <motion.div 
+          style={{ 
+            opacity: scene2Opacity, 
+            pointerEvents: useTransform(scrollYProgress, [0.3, 0.33, 0.57, 0.6], ["none", "auto", "auto", "none"]),
+            display: useTransform(scrollYProgress, [0.29, 0.3, 0.6, 0.61], ["none", "block", "block", "none"])
+          }}
+          className="fixed inset-0 z-20"
+        >
+          <Scene2 scrollProgress={scrollYProgress} courses={responsiveCourses} />
+        </motion.div>
+
+        {/* Scene 3: The Effort Loop */}
+        <motion.div 
+          style={{ 
+            opacity: scene3Opacity, 
+            pointerEvents: useTransform(scrollYProgress, [0.6, 0.63, 0.87, 0.9], ["none", "auto", "auto", "none"]),
+            display: useTransform(scrollYProgress, [0.59, 0.6, 0.9, 0.91], ["none", "block", "block", "none"])
+          }}
+          className="fixed inset-0 z-30"
+        >
+          <Scene3 scrollProgress={scrollYProgress} />
+        </motion.div>
       </motion.div>
 
-      {/* Scene 2: The Quiet Failure */}
+      {/* Final Transition Logo */}
       <motion.div 
-        style={{ 
-          opacity: scene2Opacity, 
-          pointerEvents: useTransform(scrollYProgress, [0.33, 0.36, 0.63, 0.66], ["none", "auto", "auto", "none"]),
-          display: useTransform(scrollYProgress, [0.32, 0.33, 0.66, 0.67], ["none", "block", "block", "none"])
-        }}
-        className="fixed inset-0 z-20"
+        style={{ opacity: transitionOpacity }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-white pointer-events-none"
       >
-        <Scene2 scrollProgress={scrollYProgress} courses={responsiveCourses} />
-      </motion.div>
-
-      {/* Scene 3: The Effort Loop */}
-      <motion.div 
-        style={{ 
-          opacity: scene3Opacity, 
-          pointerEvents: useTransform(scrollYProgress, [0.66, 0.69], ["none", "auto"]),
-          display: useTransform(scrollYProgress, [0.65, 0.66], ["none", "block"])
-        }}
-        className="fixed inset-0 z-30"
-      >
-        <Scene3 scrollProgress={scrollYProgress} />
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center">
+            <div className="w-8 h-8 border-4 border-white rounded-full" />
+          </div>
+          <h2 className="text-3xl font-bold tracking-tighter">Harmony</h2>
+          <p className="text-zinc-400 font-medium italic">Find your flow.</p>
+        </div>
       </motion.div>
 
       {/* Spacer to allow scrolling */}
-      <div className="h-[900vh] pointer-events-none" />
+      <div className="h-[1000vh] pointer-events-none" />
     </div>
   );
 }

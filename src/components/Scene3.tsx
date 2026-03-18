@@ -1,9 +1,9 @@
 import React from 'react';
-import { motion, useTransform } from 'motion/react';
+import { motion, useTransform, MotionValue } from 'motion/react';
 import { Calendar, Youtube, FileText, Bookmark, AlertCircle } from 'lucide-react';
 
 interface Scene3Props {
-  scrollProgress: any;
+  scrollProgress: MotionValue<number>;
 }
 
 const Scene3 = ({ scrollProgress }: Scene3Props) => {
@@ -16,8 +16,8 @@ const Scene3 = ({ scrollProgress }: Scene3Props) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Scene 3 is active from 0.66 to 1.0 of the total scroll progress
-  const effortProgress = useTransform(scrollProgress, [0.66, 1], [0, 1]);
+  // scrollProgress is already normalized to [0, 1] for this scene
+  const effortProgress = scrollProgress;
 
   // Floating Tiles Data
   const tiles = [

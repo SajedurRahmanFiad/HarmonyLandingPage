@@ -5,8 +5,8 @@ import { CourseCardProps } from '../types';
 
 const CourseCard: React.FC<CourseCardProps> = ({ course, scrollProgress, index, isFailureScene, failureProgress }) => {
   // Scene 1 Animation Logic
-  const start = 0.05 + (index * 0.03);
-  const end = start + 0.1;
+  const start = 0.02 + (index * 0.02);
+  const end = start + 0.08;
   
   const x = useTransform(scrollProgress, [0, start, end], [course.entryDirection.x, course.entryDirection.x, course.finalOffset.x]);
   const y = useTransform(scrollProgress, [0, start, end], [course.entryDirection.y, course.entryDirection.y, course.finalOffset.y]);

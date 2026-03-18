@@ -11,6 +11,8 @@ export interface Course {
   finalOffset: { x: number; y: number };
   lastWatched?: string;
   status?: string;
+  topic?: string;
+  outcome?: string;
 }
 
 export interface CourseCardProps {
